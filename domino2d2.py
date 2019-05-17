@@ -271,21 +271,21 @@ class Croupier(list):
                 return 2
 
 
-    # def j1Joue(self):
-    #     print(self.plateau)
-    #     print(self.plateauv)
-    #     print(self.j1)
-    #     x = input()#numéro du domino, g/d/hg/hd/bg/bd , x , y, r/n
-    #     x=x.split(',')
-    #     print(x)
-    #     if len(x)==5:
-    #         if x[4]=='r':
-    #             self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
-    #         else:
-    #             self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
-    #     else:
-    #         print('erreur saisie')
-    #         return self.j1Joue()
+    def j1Joue(self):
+        print(self.plateau)
+        print(self.plateauv)
+        print(self.j1)
+        x = input()#numéro du domino, g/d/hg/hd/bg/bd , x , y, r/n
+        x=x.split(',')
+        print(x)
+        if len(x)==5:
+            if x[4]=='r':
+                self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+            else:
+                self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+        else:
+            print('erreur saisie')
+            return self.j1Joue()
 
 
     def j2Joue(self):

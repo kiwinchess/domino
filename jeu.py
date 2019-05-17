@@ -33,8 +33,19 @@ class Game(QMainWindow, Ui_MainWindow):
         self.commandeButtons = []
         for i in range(6):
             self.commandeButtons.append(self.gridLayout_Commande.itemAt(i).widget())
+        
+        self.indice = 1
+        self.clic = 0
 
-     
+        for i in self.j2Buttons:
+            i.clicked.connect(self.clicJ2)
+        for i in self.j1Buttons:
+            i.clicked.connect(self.clicJ1)
+        for i in self.plateauButtons:
+            i.clicked.connect(self.clicPlateau)
+        for i in self.commandeButtons:
+            i.clicked.connect(self.clicCommande)
+  
     
     # def afficheCoord(self):
     #     button = self.sender()
@@ -90,11 +101,12 @@ class Game(QMainWindow, Ui_MainWindow):
         for buttons in self.plateauButtons:
             buttons.setIcon(QIcon())
         for domino in cr.plateauv.contenu:
-            xIconPath = os.path.join("Icons","petit-"+ str(domino.c1) + "-"+str(domino.c2)+".gif")
-            self.Icon=QIcon(xIconPath)
-            self.plateauButtons[j].setIcon(self.Icon)
-            self.plateauButtons[j].setIconSize(QSize(500,100))        
-            j += 1
+
+                xIconPath = os.path.join("Icons","petit-"+ str(domino.c1) + "-"+str(domino.c2)+".gif")
+                self.Icon=QIcon(xIconPath)
+                self.plateauButtons[j].setIcon(self.Icon)
+                self.plateauButtons[j].setIconSize(QSize(500,100))        
+                j += 1
         
     def choixJ1(self):
         pass    
@@ -106,41 +118,84 @@ class Game(QMainWindow, Ui_MainWindow):
         self.changerJ2()
         self.changerPlateau()
     
-    def j1Joue(self):
-        while len(self.xinput) < 9 :
-            for i in self.j1Buttons:
-                i.clicked.connect(self.clicJ1)
-            for i in self.plateauButtons:
-                i.clicked.connect(self.clicPlateau)
-            for i in self.commandeButtons:
-                i.clicked.connect(self.clicCommande)
-        x = self.xinput.split(',')
-        self.xinput = ""
-        print(x)
-        if len(x)==5:
-            if x[4]=='r':
-                self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
-            else:
-                self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
-        else:
-            print('erreur saisie')
-            return self.j1Joue()
-
             
     def clicJ1(self):
         button = self.sender()
         idx = self.gridLayout_J1.indexOf(button)
         pos = self.gridLayout_J1.getItemPosition(idx)       
         self.xinput += str(pos[1]) + "," 
+        self.clic += 1
+
     def clicPlateau(self):
         button = self.sender()
         idx = self.gridLayout_Plateau.indexOf(button)
         pos = self.gridLayout_Plateau.getItemPosition(idx)
         self.xinput += str(pos[0]) + "," + str(pos[1]) + ","
+        self.clic += 1
+
     def clicCommande(self):
         button = self.sender()
         com = button.text()
         self.xinput += str(com) + ","
+        self.clic += 1
+        if self.indice == 1:
+            return self.j1Joue()
+        if self.indice == 2:
+            return self.j2Joue()
+            
+    def j1Joue(self):
+        if self.clic >= 4:
+            x = self.xinput.split(',')
+            print(x)
+            self.xinput = ""
+            self.indice = 2
+            if len(x)==5:
+                if x[4]=='r':
+                    self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                else:
+                    self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+            
+            else:
+                print('erreur saisie')
+                print(x)
+                return self.j1Joue()
+            
+    def j2Joue(self):
+        if self.clic >= 4:
+            x = self.xinput.split(',')
+            print(x)
+            self.xinput = ""
+            self.indice = 1
+            if len(x)==5:
+                if x[4]=='r':
+                    self.ajouteDomino(self.j2.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                else:
+                    self.ajouteDomino(self.j2.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+            
+            else:
+                print('erreur saisie')
+                print(x)
+                return self.j1Joue()
+    
+
+
+
+    # def j1Joue(self):
+    #     print(cr.plateau)
+    #     print(cr.plateauv)
+    #     print(cr.j1)
+    #     x = input()#numéro du domino, g/d/hg/hd/bg/bd , x , y, r/n
+    #     x=x.split(',')
+    #     print(x)
+    #     if len(x)==5:
+    #         if x[4]=='r':
+    #             self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+    #         else:
+    #             self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+    #     else:
+    #         print('erreur saisie')
+    #         return self.j1Joue()
+            
         
     
     def simulation(self,a=-1,p=True):
@@ -181,11 +236,11 @@ class Game(QMainWindow, Ui_MainWindow):
                 a = 2
         if a==1:
               if cr.peutJouer(2)== True:
-                cr.j2Joue()
-                self.affichagePlateau()
-                if cr.peutJouer(1)== True:
-                    self.j1Joue()
+                if self.j1Joue():
                     self.affichagePlateau()
+                if cr.peutJouer(1)== True:
+                    if self.j1Joue():
+                        self.affichagePlateau()
                 else:
                   print("OUUIIIIIIIIIIII")
                   print("j1 a pioché ")
