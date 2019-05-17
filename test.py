@@ -22,50 +22,64 @@ class Game(QMainWindow, Ui_MainWindow):
         for i in range(2):
             self.comButton.append(self.gridLayout_Com.itemAt(i).widget())
         self.indice = 1
-        self.clic = 0
-
-
-    def input(self):
-
-            for i in self.cButton:
-                
-                i.clicked.connect(self.clicChiffre)
-            for i in  self.comButton:
-                i.clicked.connect(self.clicCommande)   
-
-    def boutonClique(self):
         self.clic = 1
+        
+        
+        for i in self.cButton:
+            i.clicked.connect(self.clicChiffre)
+        for i in  self.comButton:
+            i.clicked.connect(self.clicCommande)
+            
+
+                    
+            
+    
 
     def clicChiffre(self):
         button = self.sender()
         idx = self.gridLayout.indexOf(button)
         pos = self.gridLayout.getItemPosition(idx)       
         self.xinput += str(pos[0]) + "," + str(pos[1]) + ","
+        print("clic   ", self.clic)
+        self.clic += 1
+        if self.indice == 1:
+            return  self.j1Joue()
+        if self.indice == 2:
+            return self.j2Joue()
+
 
     def clicCommande(self):
         button = self.sender()
         com = button.text()
         self.xinput += str(com) 
-        if len(self.xinput) == 5:
-            self.indice = 0
-            self.j1joue()
-
-    def j1joue(self):
-        if self.indice != 0: 
-            return self.input()       
-        if self.indice == 0:
-            print(self.xinput)
-            x = self.xinput.split(',')
-            print(x)
+        print("clic   ", self.clic)
+        self.clic += 1 
+        if self.indice == 1:
+            return self.j1Joue()
+        if self.indice == 2:
+            return self.j2Joue()
+        
+    
+    def j1Joue(self):
+        if self.clic>=3:
+        
+            print("J1   ",self.xinput)
             self.xinput = ""
+            self.clic = 1
+            self.indice = 2
+    
+    def j2Joue(self):
+        if self.clic>=3:
+            print("J2    ",self.xinput)
+            print(self.xinput)
+            self.xinput = ""
+            self.clic = 1
             self.indice = 1
-            return 10
+
     
     def simul(self):
-        if self.j1joue():
-
-            print(a)
-
+        self.indice = 1
+        self.indice = 2 
         
         
 
@@ -80,7 +94,8 @@ class Game(QMainWindow, Ui_MainWindow):
 
 app = QApplication(sys.argv)
 game = Game()
-game.simul()
-game.show()
 
+game.j1Joue()
+
+game.show()
 app.exec_()
