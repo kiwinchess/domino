@@ -964,7 +964,7 @@
       <x>550</x>
       <y>550</y>
       <width>281</width>
-      <height>89</height>
+      <height>120</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_Commande">
@@ -978,7 +978,7 @@
      <item row="2" column="0">
       <widget class="QPushButton" name="pushButton_136">
        <property name="text">
-        <string>r</string>
+        <string>g</string>
        </property>
       </widget>
      </item>
@@ -1013,7 +1013,7 @@
      <item row="0" column="1">
       <widget class="QPushButton" name="pushButton_132">
        <property name="text">
-        <string/>
+        <string>r</string>
        </property>
       </widget>
      </item>
@@ -1027,7 +1027,7 @@
      <item row="2" column="2">
       <widget class="QPushButton" name="pushButton_137">
        <property name="text">
-        <string/>
+        <string>d</string>
        </property>
       </widget>
      </item>

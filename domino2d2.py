@@ -41,7 +41,7 @@ class Croupier(list):
 
     def __init__(self):
         self.plateauv=Joueur('plateauv',[])
-        self.plateau=Joueur('plateau',[[0 for i in range(14)]for j in range(14)] )
+        self.plateau=Joueur('plateau',[[0 for i in range(10)]for j in range(10)] )
         self.j1 = Joueur(1,[])
         self.j2 = Joueur(2,[])
         self.pioche = Joueur('pioche',[])
@@ -251,12 +251,12 @@ class Croupier(list):
                 x=input()
                 x = int(x)
                 a=self.j1.contenu[x]
-                self.plateau.contenu[7][7]=a
+                self.plateau.contenu[5][5]=a
                 self.plateauv.contenu.append(a)
                 self.j1.contenu[x].etat='plateau'
                 self.j1.contenu.pop(x)
 
-                return 1
+                return 2
 
             if self.j2.monDoubleLePlusFort()>self.j1.monDoubleLePlusFort():
                 print(self.j2)
@@ -264,11 +264,11 @@ class Croupier(list):
                 x=input()
                 x = int(x)
                 a=self.j2.contenu[x]
-                self.plateau.contenu[7][7]=a
+                self.plateau.contenu[5][5]=a
                 self.plateauv.contenu.append(a)
                 self.j2.contenu[x].etat='plateau'
                 self.j2.contenu.pop(x)
-                return 2
+                return 1
 
 
     def j1Joue(self):

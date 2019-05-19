@@ -31,7 +31,7 @@ class Game(QMainWindow, Ui_MainWindow):
         for i in range(100):
             self.plateauButtons.append(self.gridLayout_Plateau.itemAt(i).widget())
         self.commandeButtons = []
-        for i in range(6):
+        for i in range(9):
             self.commandeButtons.append(self.gridLayout_Commande.itemAt(i).widget())
         
         self.indice = 1
@@ -97,16 +97,18 @@ class Game(QMainWindow, Ui_MainWindow):
             j += 1
     
     def changerPlateau(self):
-        j = 0  
         for buttons in self.plateauButtons:
             buttons.setIcon(QIcon())
-        for domino in cr.plateauv.contenu:
+        for i in range(10):
+            for j in range(10):
+                if cr.plateau.contenu[i][j] != 0: 
+                    domino = cr.plateau.contenu[i][j]
 
-                xIconPath = os.path.join("Icons","petit-"+ str(domino.c1) + "-"+str(domino.c2)+".gif")
-                self.Icon=QIcon(xIconPath)
-                self.plateauButtons[j].setIcon(self.Icon)
-                self.plateauButtons[j].setIconSize(QSize(500,100))        
-                j += 1
+                    xIconPath = os.path.join("Icons","petit-"+ str(domino.c1) + "-"+str(domino.c2)+".gif")
+                    self.Icon=QIcon(xIconPath)
+                    self.gridLayout_Plateau.itemAtPosition(i,j).widget().setIcon(self.Icon)
+                    self.gridLayout_Plateau.itemAtPosition(i,j).widget().setIconSize(QSize(500,100))        
+                    
         
     def choixJ1(self):
         pass    
@@ -125,6 +127,15 @@ class Game(QMainWindow, Ui_MainWindow):
         pos = self.gridLayout_J1.getItemPosition(idx)       
         self.xinput += str(pos[1]) + "," 
         self.clic += 1
+        return self.simulation()
+
+    def clicJ2(self):
+        button = self.sender()
+        idx = self.gridLayout_J2.indexOf(button)
+        pos = self.gridLayout_J2.getItemPosition(idx)       
+        self.xinput += str(pos[1]) + "," 
+        self.clic += 1
+        return self.simulation()
 
     def clicPlateau(self):
         button = self.sender()
@@ -132,50 +143,57 @@ class Game(QMainWindow, Ui_MainWindow):
         pos = self.gridLayout_Plateau.getItemPosition(idx)
         self.xinput += str(pos[0]) + "," + str(pos[1]) + ","
         self.clic += 1
+        return self.simulation()
 
     def clicCommande(self):
         button = self.sender()
         com = button.text()
         self.xinput += str(com) + ","
         self.clic += 1
-        if self.indice == 1:
-            return self.j1Joue()
-        if self.indice == 2:
-            return self.j2Joue()
+        return self.simulation()
             
     def j1Joue(self):
+        print("J1:         ")
         if self.clic >= 4:
             x = self.xinput.split(',')
+            del x[-1]
             print(x)
             self.xinput = ""
-            self.indice = 2
+            self.clic = 0
+            
             if len(x)==5:
                 if x[4]=='r':
-                    self.ajouteDomino(self.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                    cr.ajouteDomino(cr.j1.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                    self.indice = 2
                 else:
-                    self.ajouteDomino(self.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+                    cr.ajouteDomino(cr.j1.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+                    self.indice = 2
             
             else:
                 print('erreur saisie')
                 print(x)
-                return self.j1Joue()
+                return self.simulation()
             
     def j2Joue(self):
+        print("J2:         ")
         if self.clic >= 4:
             x = self.xinput.split(',')
+            del x[-1]
             print(x)
             self.xinput = ""
-            self.indice = 1
+            self.clic = 0
+            
             if len(x)==5:
                 if x[4]=='r':
-                    self.ajouteDomino(self.j2.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                    cr.ajouteDomino(cr.j2.contenu[int(x[0])].permute(),x[1],int(x[2]),int(x[3]))
+                    self.indice = 1
                 else:
-                    self.ajouteDomino(self.j2.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
-            
+                    cr.ajouteDomino(cr.j2.contenu[int(x[0])],x[1],int(x[2]),int(x[3]))
+                    self.indice = 1
             else:
                 print('erreur saisie')
                 print(x)
-                return self.j1Joue()
+                return self.simulation()
     
 
 
@@ -198,65 +216,34 @@ class Game(QMainWindow, Ui_MainWindow):
             
         
     
-    def simulation(self,a=-1,p=True):
+    def simulation(self,p=True):
         self.affichagePlateau()
         self.update()
         self.show()
         
 
         if cr.t==True:
-            a = cr.premierTour()
+            self.indice = cr.premierTour()
             self.affichagePlateau()
             self.show()
-            print("a: 0",a)
+            print("l'indice est: ",self.indice)
             cr.t=False
 
 
-        if len(cr.pioche.contenu)==0 and cr.peutJouer(cr.j1)==False and cr.peutJouer(cr.j2)==False:
-            print('la partie est terminée')
+        if self.indice == 1:
+            self.j1Joue()
+            self.affichagePlateau()
 
-        if a==2:
-              if cr.peutJouer(1)== True:
-                self.j1Joue()
-                self.affichagePlateau()
+        if self.indice == 2:
+            self.j2Joue()
+            self.affichagePlateau()
 
-                if cr.peutJouer(2)== True:
-                    cr.j2Joue()
-                    self.affichagePlateau()
-                else:
-                  print("j2 a pioché ")
-                  cr.piocher(cr.j2)
-                  self.affichagePlateau()
-                  a = 1
-              else:
-                print("YESSSSSSSSSSSSSSSSSSS")
-                print("j1 a pioché ")
-                cr.piocher(cr.j1)
-                self.affichagePlateau()
-                a = 2
-        if a==1:
-              if cr.peutJouer(2)== True:
-                if self.j1Joue():
-                    self.affichagePlateau()
-                if cr.peutJouer(1)== True:
-                    if self.j1Joue():
-                        self.affichagePlateau()
-                else:
-                  print("OUUIIIIIIIIIIII")
-                  print("j1 a pioché ")
-                  cr.piocher(cr.j1)
-                  self.affichagePlateau()
-                  a = 2
-              else:
-                print("j2 a pioché ")
-                cr.piocher(cr.j2)
-                self.affichagePlateau()
-                a = 1
+
         
         
 
 
-        return (self.simulation(a,p))
+        
 
 app = QApplication(sys.argv)
 cr=Croupier()
