@@ -36,6 +36,7 @@ class Game(QMainWindow, Ui_MainWindow):
         
         self.indice = 1
         self.clic = 0
+        self.pv = False
 
         for i in self.j2Buttons:
             i.clicked.connect(self.clicJ2)
@@ -45,7 +46,7 @@ class Game(QMainWindow, Ui_MainWindow):
             i.clicked.connect(self.clicPlateau)
         for i in self.commandeButtons:
             i.clicked.connect(self.clicCommande)
-  
+
     
     # def afficheCoord(self):
     #     button = self.sender()
@@ -195,6 +196,45 @@ class Game(QMainWindow, Ui_MainWindow):
                 print(x)
                 return self.simulation()
     
+    def premierTour(self):
+            
+            if cr.j1.monDoubleLePlusFort()>cr.j2.monDoubleLePlusFort(): 
+                print(cr.j1)
+                print("C'est au joueur 1 de commencer: ")
+                if self.clic >= 1:
+                    x = int(self.xinput[0])
+                    print(x)
+                    a=cr.j1.contenu[x]
+                    cr.plateau.contenu[5][5]=a
+                    cr.plateauv.contenu.append(a)
+                    cr.j1.contenu[x].etat='plateau'
+                    cr.j1.contenu.pop(x)
+                    self.clic = 0 
+                    self.xinput = ""
+                    self.pv = True
+                    cr.t = False
+
+                    return 2
+
+            if cr.j2.monDoubleLePlusFort()>cr.j1.monDoubleLePlusFort():
+                print(cr.j2)
+                print("C'est au joueur 2 de commencer: ")
+                if self.clic >= 1:
+
+                    x = int(self.xinput[0])
+
+                    print(x)
+                    a=cr.j2.contenu[x]
+                    cr.plateau.contenu[5][5]=a
+                    cr.plateauv.contenu.append(a)
+                    cr.j2.contenu[x].etat='plateau'
+                    cr.j2.contenu.pop(x)
+                    self.pv = True
+                    cr.t = False
+                    self.clic = 0
+                    self.xinput = ""
+                    return 1
+    
 
 
 
@@ -223,11 +263,12 @@ class Game(QMainWindow, Ui_MainWindow):
         
 
         if cr.t==True:
-            self.indice = cr.premierTour()
             self.affichagePlateau()
+            
+            self.indice = self.premierTour()
             self.show()
             print("l'indice est: ",self.indice)
-            cr.t=False
+            
 
 
         if self.indice == 1:
